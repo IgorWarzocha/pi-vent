@@ -1,0 +1,42 @@
+{
+  "name": "@howaboua/pi-vent",
+  "version": "0.1.0",
+  "description": "A Pi extension that lets the agent append major-issue feedback to VENT.md.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Igor Warzocha",
+  "homepage": "https://github.com/IgorWarzocha/pi-vent#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IgorWarzocha/pi-vent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/IgorWarzocha/pi-vent/issues"
+  },
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "pi",
+    "agent",
+    "feedback",
+    "vent"
+  ],
+  "files": [
+    "extensions",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*",
+    "typebox": "*"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions/vent.ts"
+    ]
+  }
+}
