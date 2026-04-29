@@ -87,9 +87,15 @@ export default function ventExtension(pi: ExtensionAPI) {
       return new Text(`${theme.fg("toolTitle", theme.bold("vent"))}${theme.fg("muted", trigger)}`, 0, 0);
     },
 
-    renderResult(result, _options, theme) {
+    renderResult(result, { expanded }, theme) {
       const timestamp = typeof result.details?.timestamp === "string" ? result.details.timestamp : "saved";
-      return new Text(`${theme.fg("success", "✓")} wrote ${theme.fg("accent", "VENT.md")} ${theme.fg("dim", timestamp)}`, 0, 0);
+      let text = `${theme.fg("success", "✓")} wrote ${theme.fg("accent", "VENT.md")} ${theme.fg("dim", timestamp)}`;
+
+      if (expanded && typeof result.details?.thought === "string") {
+        text += `\n\n${result.details.thought}`;
+      }
+
+      return new Text(text, 0, 0);
     },
   });
 }
