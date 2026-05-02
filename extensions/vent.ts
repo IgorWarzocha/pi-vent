@@ -8,7 +8,7 @@ const ventSchema = Type.Object(
   {
     thought: Type.String({
       description:
-        "Your candid feedback, frustration, confusion, or postmortem note.",
+        "Log repeated/systemic workflow friction: symptom, repeated workaround, and suggested fix.",
     }),
     trigger: Type.Optional(
       Type.String({ description: "Short label for what triggered this vent, e.g. tool_error, bad_docs, confusing_task." }),
@@ -36,12 +36,15 @@ export default function ventExtension(pi: ExtensionAPI) {
     name: "vent",
     label: "vent",
     description:
-      "Append your feedback/vents to VENT.md after major issues; batch at end of turn.",
-    promptSnippet: "Append your vents to VENT.md",
+      "Log repeated/systemic workflow friction to VENT.md; batch near end of turn.",
+    promptSnippet: "Log repeated workflow friction to VENT.md",
     promptGuidelines: [
-      "Use vent only for major issues, not minor annoyances: repeated tool failures, seriously confusing instructions, broken docs, flaky commands, or avoidable friction that materially slowed you down.",
-      "Use vent near the end of your turn and batch multiple thoughts into one call instead of making constant vent calls.",
-      "Keep vent entries specific: what happened, why it sucked, and what would make it better next time. Do not use vent as a substitute for completing the user's task.",
+      "Use vent to log repeated or systemic workflow friction, especially when you notice yourself applying the same manual workaround more than once.",
+      "Use vent after the second repeated hook/tool failure caused by the same root cause, or when a tool's output makes you retry the same command sequence.",
+      "Use vent when project instructions, docs, or tooling cause avoidable backtracking that should become future automation, docs, or workflow fixes.",
+      "Do not use vent for one-off lint/type errors or ordinary coding mistakes that are simply part of normal development.",
+      "Use vent near the end of your turn after completing the task, and batch multiple related thoughts into one call instead of making constant vent calls.",
+      "Vent entries should include: what failed, what workaround you repeated, and what would prevent it next time. Do not use vent as a substitute for completing the user's task.",
     ],
     parameters: ventSchema,
     executionMode: "sequential",
@@ -61,7 +64,7 @@ export default function ventExtension(pi: ExtensionAPI) {
         String(now.getHours()).padStart(2, "0"),
         String(now.getMinutes()).padStart(2, "0"),
       ].join(":");
-      const heading = "# VENT\n\nFeedback log. Candid notes about friction, failures, and things that should be improved.\n\n";
+      const heading = "# VENT\n\nFeedback log. Repeated/systemic workflow friction that should become future automation, docs, or workflow fixes.\n\n";
       const entry = [
         `## ${timestamp}${trigger ? ` — ${trigger}` : ""}`,
         "",
