@@ -1,7 +1,7 @@
 {
   "name": "@howaboua/pi-vent",
-  "version": "0.2.1",
-  "description": "A Pi extension that lets the agent append major-issue feedback to VENT.md.",
+  "version": "0.2.2",
+  "description": "Pi extension for logging repeated workflow friction to VENT.md.",
   "type": "module",
   "license": "MIT",
   "author": "Igor Warzocha",
@@ -26,13 +26,24 @@
     "README.md",
     "LICENSE"
   ],
+  "scripts": {
+    "check": "tsc --noEmit",
+    "prepack": "npm run check"
+  },
   "publishConfig": {
     "access": "public"
   },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "typebox": "^1.0.55",
+    "typescript": "^5.9.3",
+    "@earendil-works/pi-coding-agent": "^0.74.0",
+    "@earendil-works/pi-tui": "^0.74.0"
+  },
   "peerDependencies": {
-    "@mariozechner/pi-coding-agent": "*",
-    "@mariozechner/pi-tui": "*",
-    "typebox": "*"
+    "typebox": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
   },
   "pi": {
     "extensions": [

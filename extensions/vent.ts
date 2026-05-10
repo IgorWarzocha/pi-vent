@@ -1,17 +1,16 @@
 import { appendFile, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { Type } from "typebox";
-import { Text } from "@mariozechner/pi-tui";
-import { withFileMutationQueue, type ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
+import { withFileMutationQueue, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const ventSchema = Type.Object(
   {
     thought: Type.String({
-      description:
-        "Log repeated/systemic workflow friction: symptom, repeated workaround, and suggested fix.",
+      description: "Vent entry text.",
     }),
     trigger: Type.Optional(
-      Type.String({ description: "Short label for what triggered this vent, e.g. tool_error, bad_docs, confusing_task." }),
+      Type.String({ description: "Optional short trigger label." }),
     ),
   },
   { additionalProperties: false },
@@ -35,16 +34,15 @@ export default function ventExtension(pi: ExtensionAPI) {
   pi.registerTool({
     name: "vent",
     label: "vent",
-    description:
-      "Log repeated/systemic workflow friction to VENT.md; batch near end of turn.",
-    promptSnippet: "Log repeated workflow friction to VENT.md",
+    description: "Append workflow-friction feedback to VENT.md.",
+    promptSnippet: "Log repeated workflow friction.",
     promptGuidelines: [
-      "Use vent to log repeated or systemic workflow friction, especially when you notice yourself applying the same manual workaround more than once.",
-      "Use vent after the second repeated hook/tool failure caused by the same root cause, or when a tool's output makes you retry the same command sequence.",
-      "Use vent when project instructions, docs, or tooling cause avoidable backtracking that should become future automation, docs, or workflow fixes.",
-      "Do not use vent for one-off lint/type errors or ordinary coding mistakes that are simply part of normal development.",
-      "Use vent near the end of your turn after completing the task, and batch multiple related thoughts into one call instead of making constant vent calls.",
-      "Vent entries should include: what failed, what workaround you repeated, and what would prevent it next time. Do not use vent as a substitute for completing the user's task.",
+      "`vent`: Use for repeated or systemic workflow friction, especially when the same manual workaround happens more than once.",
+      "`vent`: Use after a second hook/tool failure with the same root cause, or when tool output forces the same retry sequence.",
+      "`vent`: Use when project instructions, docs, or tooling cause avoidable backtracking that should become automation, docs, or workflow fixes.",
+      "`vent`: Do not use for one-off lint/type errors or ordinary coding mistakes.",
+      "`vent`: Call near the end of the turn after completing the task; batch related feedback instead of calling repeatedly.",
+      "`vent`: Include what failed, what workaround was repeated, and what would prevent it next time; never use vent as a substitute for finishing the task.",
     ],
     parameters: ventSchema,
     executionMode: "sequential",
@@ -91,11 +89,12 @@ export default function ventExtension(pi: ExtensionAPI) {
     },
 
     renderResult(result, { expanded }, theme) {
-      const timestamp = typeof result.details?.timestamp === "string" ? result.details.timestamp : "saved";
+      const details = result.details as { timestamp?: unknown; thought?: unknown } | undefined;
+      const timestamp = typeof details?.timestamp === "string" ? details.timestamp : "saved";
       let text = `${theme.fg("success", "✓")} wrote ${theme.fg("accent", "VENT.md")} ${theme.fg("dim", timestamp)}`;
 
-      if (expanded && typeof result.details?.thought === "string") {
-        text += `\n\n${result.details.thought}`;
+      if (expanded && typeof details?.thought === "string") {
+        text += `\n\n${details.thought}`;
       }
 
       return new Text(text, 0, 0);
